@@ -1,0 +1,64 @@
+<?php
+include_once 'dbhh.php';
+if(isset($_POST['submit'])){
+$first = mysqli_real_escape_string($connn, $_POST['first']);
+$last =  mysqli_real_escape_string($connn, $_POST['last']);
+$contact =  mysqli_real_escape_string($connn, $_POST['contact']);
+$gname =  mysqli_real_escape_string($connn, $_POST['gname']);
+$location =  mysqli_real_escape_string($connn, $_POST['location']);
+$services =  mysqli_real_escape_string($connn, $_POST['services']);
+$email =  mysqli_real_escape_string($connn, $_POST['email']);
+$pwd = mysqli_real_escape_string($connn, $_POST['password']);
+$pwd2 =mysqli_real_escape_string($connn, $_POST['confirm']);
+
+
+$sql = "INSERT INTO garagesignup(first, last, contact,gname, location, services, email, pwd, confirm) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+mysqli_query($connn, $sql);
+$sql = "SELECT * FROM usersignup WHERE first='$first' AND last='$last'";
+$result = mysqli_query($connn, $sql);  
+if(mysqli_num_rows($result) > 0){
+	while($row = mysqli_fetch_assoc($result)){
+	$userid = $row['first'];	
+	$sql = "INSERT INTO imgupload(userid, status) VALUES ('$userid', 1)";
+	mysqli_query($connn, $sql);
+	header("Location: ../usersignup.php?signup = sucess");
+	}
+}else{
+	echo "You have an error";
+		$stmt = mysqli_stmt_init($connn);
+		/*
+if(!mysqli_stmt_prepare($stmt, $sql))
+{ 
+		header("Location: ../assignmentsignup.php?error=sqlerror");
+		exit();
+}else{
+//$hashedPwd = password_hash($pwd,PASSWORD_DEFAULT);}
+	mysqli_stmt_bind_param($stmt, "sssssss", $first, $last, $contact, $location, $email, $pwd , $pwd2);
+mysqli_stmt_execute($stmt);
+header("Location: ../assignmentsignup.php?signup = sucess");}else
+{
+	header("Location: ../assignmentsignup.php?");
+
+die();}
+*/
+if(!mysqli_stmt_prepare($stmt, $sql))
+{
+echo "SQL error";
+}else{
+	//$hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
+mysqli_stmt_bind_param($stmt, "sssssssss", $first, $last, $contact, $gname, $location, $services, $email, $pwd, $pwd2);	
+mysqli_stmt_execute($stmt);}
+
+	if(!preg_match("/^[a-zA-Z]*$/", $first) || !preg_match("/^[a-zA-Z]*$/", $last) || !preg_match("/^[a-zA-Z]*$/", $user)){
+		header("Location: ../usersignup.php?signup = char");
+die();
+}else{
+	if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+		header("Location: ../garagesign.php?signup=email&first=$first&last=$last");
+	die();
+	}else{
+	header("Location: ../garagesign.php?signup = sucess");
+die();}}}else{
+header("Location: ../garagesign.php");
+die();}
